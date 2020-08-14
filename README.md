@@ -11,6 +11,6 @@
 - MySQL;
 - EF Core;
 - Identity EF Core;
-- JWT;
+- JSON Web Token - JWT;
 
 
