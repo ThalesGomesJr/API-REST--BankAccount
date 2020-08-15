@@ -8,7 +8,7 @@ namespace WeBank.API.DTOs
         public string TypeMovement { get; set; }
         public decimal Value { get; set; }
         public string Receiver { get; set; }
-        public DateTime DateMovement { get; set; }
+        public string DateMovement { get; set; }
 
     }
 }
