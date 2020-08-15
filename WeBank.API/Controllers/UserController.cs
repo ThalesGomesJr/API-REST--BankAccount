@@ -108,7 +108,7 @@ namespace WeBank.API.Controllers
 
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(this._config.GetSection("AppSettings:Token").Value)); 
 
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha384Signature); 
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature); 
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
