@@ -54,12 +54,86 @@ namespace WeBank.API.Controllers
 
                 return BadRequest(result.Errors);
             }
-
             catch (System.Exception)
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de dados falhou");
             }
         }
+        
+        [HttpPut("{Id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Update(int Id, UserUpdateDTO userUpdate)
+        {
+            try
+            {
+                var user = await this._userManager.FindByIdAsync(Id.ToString());
+                if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
+
+                this._mapper.Map(userUpdate, user);
+                
+                var result = await this._userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    return Created($"/api/user/{userUpdate.Id}", this._mapper.Map<UserDTO>(user));
+                }    
+
+                return BadRequest(result.Errors);
+            }
+            catch (System.Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de dados falhou");
+            }
+        }
+
+        [HttpPut("updatePassword/{Id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdatePassword(int Id, UserUpdatePasswordDTO userUpdatePassword)
+        {
+            try
+            {
+                var user = await this._userManager.FindByIdAsync(Id.ToString());
+                if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
+
+                await this._userManager.RemovePasswordAsync(user);
+                var result = await this._userManager.AddPasswordAsync(user, userUpdatePassword.Password);
+
+                if (result.Succeeded)
+                {
+                    return Ok();
+                }    
+
+                return BadRequest(result.Errors);
+            }
+            catch (System.Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de dados falhou");
+            }
+        }
+
+        [HttpDelete("{Id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Delete(int Id)
+        {
+            try
+            {
+                var user = await this._userManager.FindByIdAsync(Id.ToString());
+                if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
+                var result = await this._userManager.DeleteAsync(user);
+
+                if (result.Succeeded)
+                {
+                    return Ok();
+                }
+                
+                return BadRequest(result.Errors);
+            }
+            catch (System.Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de dados falhou");
+            }
+        }
+
 
         [HttpPost("login")]
         [AllowAnonymous]
@@ -124,34 +198,9 @@ namespace WeBank.API.Controllers
             return tokenHandler.WriteToken(token);
         }
 
-        [HttpDelete("{Id}")]
+        [HttpGet("getAll")]
         [AllowAnonymous]
-        public async Task<IActionResult> Delete(int Id)
-        {
-            try
-            {
-                var evento = await this._repo.GetUserAsyncById(Id);
-                if (evento == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
-
-                this._repo.Delete(evento);
-
-                if (await _repo.SaveChangesAsync())
-                {
-                    return Ok();
-                }
-
-            }
-            catch (System.Exception)
-            {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de dados falhou");
-            }
-
-            return BadRequest();
-        }
-
-        [HttpGet("get")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
@@ -167,11 +216,12 @@ namespace WeBank.API.Controllers
         }
 
         [HttpGet("{Id}")]
-        public async Task<IActionResult> GetUserbyId(int id)
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserbyId(int Id)
         {
             try
             {
-                var user = await this._repo.GetUserAsyncById(id);
+                var user = await this._userManager.FindByIdAsync(Id.ToString());
                 
                 if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
 
@@ -183,7 +233,27 @@ namespace WeBank.API.Controllers
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de dados falhou");
             }
-
         }
+
+        [HttpGet("numAccount/{numAccount}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserbyNumAccount(string numAccount)
+        {
+            try
+            {
+                var user = await this._repo.GetUserAsyncByNumAccount(numAccount);
+                
+                if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Numero da conta não encontrado");
+
+                var results = this._mapper.Map<UserTransferDTO>(user);
+                
+                return Ok(results);
+            }
+            catch (System.Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de dados falhou");
+            }
+        }
+
     }
 }
