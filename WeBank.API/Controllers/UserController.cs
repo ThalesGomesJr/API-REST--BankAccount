@@ -215,6 +215,26 @@ namespace WeBank.API.Controllers
             }
         }
 
+        [HttpGet("name/{userName}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserbyName(string userName)
+        {
+            try
+            {
+                var user = await this._userManager.FindByNameAsync(userName);
+                
+                if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
+
+                var results = this._mapper.Map<UserDTO>(user);
+        
+                return Ok(results);
+            }
+            catch (System.Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de dados falhou");
+            }
+        }
+
         [HttpGet("{Id}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetUserbyId(int Id)
