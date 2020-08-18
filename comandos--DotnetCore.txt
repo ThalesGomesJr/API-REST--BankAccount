@@ -6,17 +6,17 @@ dotnet new webapi -n <nome-do-projeto>
 dotnet new classlib -f netstandard<version> -n <nome-do-projeto>
 
 ////|Adiciona referência entre os projetos|\\\\
-dotnet add <project1>.csproj reference <project2>.csproj 
+dotnet add <nome-do-projeto1>.csproj reference <nome-do-projeto2>.csproj 
 
 ////|Cria uma solução (sln)|\\\\
 dotnet new sln -n <nome-da-solução>
 
 ////|Adiciona referência dos projetos na solução (sln)|\\\\
-dotnet sln <nome-da-solução> add <project's>
+dotnet sln <nome-da-solução> add <nome-do-projeto's>
 
 ////|Cria as Migrations|\\\\
-dotnet ef --startup-project <project> migrations add init
+dotnet ef --startup-project <nome-do-projeto> migrations add init
 
 ////|Executa as Migrations no banco de dados|\\\\
-dotnet ef --startup-project <project> database update 
+dotnet ef --startup-project <nome-do-projeto> database update 
 

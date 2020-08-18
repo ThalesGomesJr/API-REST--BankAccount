@@ -1,4 +1,4 @@
-# API REST do Projeto WeBank 
+# API REST do Projeto WeBank.
 
 > Projeto em Andamento!
 
