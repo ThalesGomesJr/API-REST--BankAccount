@@ -313,5 +313,34 @@ namespace WeBank.API.Controllers
             }
         }
 
+        //Rotas para movimentações bancárias
+
+        [HttpPost("deposit/{Id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> deposit(int Id, decimal value)
+        {
+            try
+            {
+                var user = await this._userManager.FindByIdAsync(Id.ToString());
+                if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
+                
+                //Atualiza o saldo da conta
+                user.Balance += value;
+
+                var result = await this._userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    return Ok();
+                }    
+                
+                return BadRequest(result.Errors);
+            }
+            catch (System.Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de dados falhou");
+            }
+        }
+
     }
 }

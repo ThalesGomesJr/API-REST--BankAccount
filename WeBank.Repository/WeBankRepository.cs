@@ -15,6 +15,7 @@ namespace WeBank.Repository
             this._context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
+        //Busca todos os Usuários cadastrados
         public async Task<User[]> GetAllUserAsync()
         {
             IQueryable<User> query = _context.User.Include(n => n.Extracts);
@@ -53,5 +54,6 @@ namespace WeBank.Repository
             return await this.VerifyNumAccount();
         
         }
+
     }
 }
