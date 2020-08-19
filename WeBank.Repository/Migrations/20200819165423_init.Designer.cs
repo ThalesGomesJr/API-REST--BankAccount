@@ -9,7 +9,7 @@ using WeBank.Repository;
 namespace WeBank.Repository.Migrations
 {
     [DbContext(typeof(WeBankContext))]
-    [Migration("20200814001200_init")]
+    [Migration("20200819165423_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -188,6 +188,9 @@ namespace WeBank.Repository.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("FullName")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("ImageURL")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<bool>("LockoutEnabled")

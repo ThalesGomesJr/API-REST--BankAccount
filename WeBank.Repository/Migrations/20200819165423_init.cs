@@ -47,6 +47,7 @@ namespace WeBank.Repository.Migrations
                     NumAccount = table.Column<string>(nullable: true),
                     Balance = table.Column<decimal>(nullable: false),
                     SavedBalance = table.Column<decimal>(nullable: false),
+                    ImageURL = table.Column<string>(nullable: true),
                     Cpf = table.Column<string>(nullable: true),
                     Address = table.Column<string>(nullable: true)
                 },

@@ -9,6 +9,7 @@ namespace WeBank.Domain.Models
         public string NumAccount { get; set; }
         public decimal Balance { get; set; }
         public decimal SavedBalance { get; set; }
+        public string ImageURL { get; set; }
         public string Cpf { get; set; }
         public string Address { get; set; }
         public List<Extract> Extracts { get; set; }

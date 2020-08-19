@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,6 +47,7 @@ namespace WeBank.API.Controllers
             {
                 var user = this._mapper.Map<User>(userRegister);
                 user.NumAccount = await this._repo.VerifyNumAccount();
+                user.ImageURL = "default.png";
                 var result = await this._userManager.CreateAsync(user, userRegister.password);
                 
                 if (result.Succeeded)
@@ -94,7 +97,7 @@ namespace WeBank.API.Controllers
             {
                 var user = await this._userManager.FindByIdAsync(Id.ToString());
                 if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
-
+                
                 await this._userManager.RemovePasswordAsync(user);
                 var result = await this._userManager.AddPasswordAsync(user, userUpdatePassword.Password);
 
@@ -109,6 +112,41 @@ namespace WeBank.API.Controllers
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de dados falhou");
             }
+        }
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> upload()
+        {
+            try
+            {
+                var file = Request.Form.Files[0];
+                var folderName = Path.Combine("Resources","Images");
+                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
+                if(file.Length > 0)
+                {
+                    var filename = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName;
+                    var userName = filename.Replace("\"","").Split("-")[0];
+                    var fullPath = Path.Combine(pathToSave, filename.Replace("\""," ").Trim());
+                    
+                    var user = await this._userManager.FindByNameAsync(userName.ToUpper());
+                    user.ImageURL = filename.Replace("\""," ").Trim();
+
+                    await this._userManager.UpdateAsync(user);
+
+                    using(var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                       await file.CopyToAsync(stream);
+                    }
+                }
+
+                return Ok();
+            }
+            catch (System.Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de dados falhou");
+            }
+            
         }
 
         [HttpDelete("{Id}")]
@@ -245,7 +283,7 @@ namespace WeBank.API.Controllers
                 
                 if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
 
-                var results = this._mapper.Map<UserDTO>(user);
+                var results = this._mapper.Map<UserProfileDTO>(user);
                 
                 return Ok(results);
             }

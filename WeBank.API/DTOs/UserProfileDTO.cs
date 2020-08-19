@@ -6,6 +6,7 @@ namespace WeBank.API.DTOs
         public string UserName { get; set; }
         public string FullName { get; set; }
         public string NumAccount { get; set; }
+        public string ImageURL { get; set; }
         public string Cpf { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
