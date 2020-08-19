@@ -37,9 +37,9 @@ namespace WeBank.API.Controllers
             this._config = config;
         }
 
-        [HttpPost("register")]
+        [HttpPost("registration")]
         [AllowAnonymous]
-        public async Task<IActionResult> Register(UserRegisterDTO userRegister)
+        public async Task<IActionResult> Registration(UserRegisterDTO userRegister)
         {
             try
             {
@@ -86,7 +86,7 @@ namespace WeBank.API.Controllers
             }
         }
 
-        [HttpPut("updatePassword/{Id}")]
+        [HttpPut("updatepassword/{Id}")]
         [AllowAnonymous]
         public async Task<IActionResult> UpdatePassword(int Id, UserUpdatePasswordDTO userUpdatePassword)
         {
@@ -225,7 +225,7 @@ namespace WeBank.API.Controllers
                 
                 if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
 
-                var results = this._mapper.Map<UserDTO>(user);
+                var results = this._mapper.Map<UserProfileDTO>(user);
         
                 return Ok(results);
             }
