@@ -263,7 +263,7 @@ namespace WeBank.API.Controllers
                 
                 if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
 
-                var results = this._mapper.Map<UserProfileDTO>(user);
+                var results = this._mapper.Map<UserDTO>(user);
         
                 return Ok(results);
             }
@@ -283,7 +283,7 @@ namespace WeBank.API.Controllers
                 
                 if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
 
-                var results = this._mapper.Map<UserProfileDTO>(user);
+                var results = this._mapper.Map<UserDTO>(user);
                 
                 return Ok(results);
             }
@@ -335,6 +335,74 @@ namespace WeBank.API.Controllers
                 }    
                 
                 return BadRequest(result.Errors);
+            }
+            catch (System.Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de dados falhou");
+            }
+        }
+
+        [HttpPost("savemoney/{Id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> saveMoney(int Id, UserBalanceDTO userBalance)
+        {
+            try
+            {
+                var user = await this._userManager.FindByIdAsync(Id.ToString());
+                if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
+                
+                if (user.Balance >= userBalance.SavedBalance)
+                {
+                    //Atualiza o saldo da conta
+                    user.Balance = user.Balance - userBalance.SavedBalance;
+                    //Atualiza o saldo guardado
+                    user.SavedBalance += userBalance.SavedBalance;
+
+                    var result = await this._userManager.UpdateAsync(user);
+
+                    if (result.Succeeded)
+                    {
+                        return Ok();
+                    }    
+                    
+                    return BadRequest(result.Errors);
+                }
+
+                return this.StatusCode(StatusCodes.Status401Unauthorized, "Valor de saldo é insuficiente");
+            }
+            catch (System.Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de dados falhou");
+            }
+        }
+
+        [HttpPost("rescuemoney/{Id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> rescueMoney(int Id, UserBalanceDTO userBalance)
+        {
+            try
+            {
+                var user = await this._userManager.FindByIdAsync(Id.ToString());
+                if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
+                
+                if (user.SavedBalance >= userBalance.Balance)
+                {
+                    //Atualiza o saldo guardado
+                    user.SavedBalance = user.SavedBalance - userBalance.Balance;
+                    //Atualiza o saldo da conta
+                    user.Balance += userBalance.Balance;
+                    
+                    var result = await this._userManager.UpdateAsync(user);
+
+                    if (result.Succeeded)
+                    {
+                        return Ok();
+                    }    
+                    
+                    return BadRequest(result.Errors);
+                }
+
+                return this.StatusCode(StatusCodes.Status401Unauthorized, "Valor guardado é insuficiente");
             }
             catch (System.Exception)
             {

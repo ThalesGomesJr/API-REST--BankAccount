@@ -10,6 +10,7 @@ namespace WeBank.API.DTOs
         public string NumAccount { get; set; }
         public decimal Balance { get; set; }
         public decimal SavedBalance { get; set; }
+        public string ImageURL { get; set; }
         public string Cpf { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
