@@ -317,7 +317,7 @@ namespace WeBank.API.Controllers
 
         [HttpPost("deposit/{Id}")]
         [AllowAnonymous]
-        public async Task<IActionResult> deposit(int Id, decimal value)
+        public async Task<IActionResult> deposit(int Id, UserBalanceDTO userBalance)
         {
             try
             {
@@ -325,7 +325,7 @@ namespace WeBank.API.Controllers
                 if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
                 
                 //Atualiza o saldo da conta
-                user.Balance += value;
+                user.Balance += userBalance.Balance;
 
                 var result = await this._userManager.UpdateAsync(user);
 
