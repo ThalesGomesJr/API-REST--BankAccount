@@ -18,9 +18,7 @@ namespace WeBank.Repository
         //Busca todos os Usuários cadastrados
         public async Task<User[]> GetAllUserAsync()
         {
-            IQueryable<User> query = _context.User.Include(n => n.Extracts);
-
-            query = query.AsNoTracking().OrderBy(c => c.Id);
+            var query = this._context.User.AsNoTracking().OrderBy(c => c.Id);
 
             return await query.ToArrayAsync();
         }
@@ -28,9 +26,7 @@ namespace WeBank.Repository
         //Busca User por NumAccount
         public async Task<User> GetUserAsyncByNumAccount(string numAccount)
         {
-            IQueryable<User> query = this._context.User.Include(n => n.Extracts);
-
-            query = query.AsNoTracking().Where(n => n.NumAccount.Contains(numAccount));
+            var query = this._context.User.AsNoTracking().Where(n => n.NumAccount.Contains(numAccount));
 
             return await query.FirstOrDefaultAsync();
         }
@@ -44,9 +40,9 @@ namespace WeBank.Repository
             var numP2 = new string(Enumerable.Repeat(numbers, 2).Select(n => n[random.Next(n.Length)]).ToArray());
             var numAccount = numP1 + "-" + numP2;
 
-            var query = this._context.User.AsNoTracking().Where(n => n.NumAccount.Contains(numAccount)).FirstOrDefaultAsync();
+            var query = await this.GetUserAsyncByNumAccount(numAccount);
 
-            if (query.Result == null)
+            if (query == null)
             {
                 return numAccount;
             }

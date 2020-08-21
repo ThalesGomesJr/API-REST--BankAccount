@@ -9,7 +9,7 @@ using WeBank.Repository;
 namespace WeBank.Repository.Migrations
 {
     [DbContext(typeof(WeBankContext))]
-    [Migration("20200819165423_init")]
+    [Migration("20200821230936_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -101,34 +101,6 @@ namespace WeBank.Repository.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
-                });
-
-            modelBuilder.Entity("WeBank.Domain.Models.Extract", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DateMovement")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Receiver")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("TypeMovement")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Value")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Extract");
                 });
 
             modelBuilder.Entity("WeBank.Domain.Models.Role", b =>
@@ -290,15 +262,6 @@ namespace WeBank.Repository.Migrations
                 {
                     b.HasOne("WeBank.Domain.Models.User", null)
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("WeBank.Domain.Models.Extract", b =>
-                {
-                    b.HasOne("WeBank.Domain.Models.User", null)
-                        .WithMany("Extracts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

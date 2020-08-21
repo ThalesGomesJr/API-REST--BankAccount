@@ -12,7 +12,6 @@ namespace WeBank.Domain.Models
         public string ImageURL { get; set; }
         public string Cpf { get; set; }
         public string Address { get; set; }
-        public List<Extract> Extracts { get; set; }
         public List<UserRole> UserRoles { get; set; }
     }
 }
