@@ -101,6 +101,34 @@ namespace WeBank.Repository.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("WeBank.Domain.Models.Extract", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Receiver")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("TypeMovement")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Extract");
+                });
+
             modelBuilder.Entity("WeBank.Domain.Models.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -260,6 +288,15 @@ namespace WeBank.Repository.Migrations
                 {
                     b.HasOne("WeBank.Domain.Models.User", null)
                         .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WeBank.Domain.Models.Extract", b =>
+                {
+                    b.HasOne("WeBank.Domain.Models.User", null)
+                        .WithMany("Extract")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

@@ -8,6 +8,7 @@ namespace WeBank.Repository
         Task<string> VerifyNumAccount();
         Task<User[]> GetAllUserAsync();
         Task<User> GetUserAsyncByNumAccount(string numAccount);
+        Task<Extract[]> GetExtractAsyncById(int id);
         
     }
 }

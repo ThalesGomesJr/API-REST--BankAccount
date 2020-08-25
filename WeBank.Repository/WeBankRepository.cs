@@ -18,7 +18,17 @@ namespace WeBank.Repository
         //Busca todos os Usuários cadastrados
         public async Task<User[]> GetAllUserAsync()
         {
-            var query = this._context.User.AsNoTracking().OrderBy(c => c.Id);
+            IQueryable<User> query = _context.User.Include(u => u.Extract);
+
+            query = query.AsNoTracking().OrderBy(u => u.Id);            
+            
+            return await query.ToArrayAsync();
+        }
+
+        //Busca o Extrato do User
+        public async Task<Extract[]> GetExtractAsyncById(int id)
+        {
+            var query = this._context.Extract.AsNoTracking().OrderByDescending(e => e.Date).Where(u => u.UserId == id);
 
             return await query.ToArrayAsync();
         }

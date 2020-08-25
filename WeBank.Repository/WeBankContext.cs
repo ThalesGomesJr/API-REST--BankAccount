@@ -11,6 +11,7 @@ namespace WeBank.Repository
         public WeBankContext(DbContextOptions<WeBankContext> options) : base(options){}
 
         public DbSet<User> User { get; set; }
+        public DbSet<Extract> Extract { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder){
 
