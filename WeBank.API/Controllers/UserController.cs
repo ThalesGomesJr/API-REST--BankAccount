@@ -293,6 +293,32 @@ namespace WeBank.API.Controllers
             }
         }
 
+        [HttpGet("extract/{Id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserExtractbyId(int Id)
+        {
+            try
+            {
+                var user = await this._userManager.FindByIdAsync(Id.ToString());
+                var extract = await this._repo.GetExtractAsyncById(Id);
+
+                if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
+
+                //Adiciona o Extrato ao User.
+                user.Extract = new List<Extract>();
+                user.Extract.AddRange(extract.ToList());
+
+                var results = this._mapper.Map<UserDTO>(user);
+                
+                return Ok(results);
+            }
+            catch (System.Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de dados falhou");
+            }
+        }
+
+
         [HttpGet("numAccount/{numAccount}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetUserbyNumAccount(string numAccount)
@@ -327,6 +353,18 @@ namespace WeBank.API.Controllers
                 //Atualiza o saldo da conta
                 user.Balance += userBalance.Balance;
 
+                //Cria o movimento para ser adicionado ao extrato
+                var movement = new Extract();                
+                movement.TypeMovement = "Depósito";
+                movement.Value = userBalance.Balance;
+                movement.Receiver = user.UserName;
+                movement.Date = DateTime.Now;
+                
+                //Adiciona a movimentação ao extrato
+                user.Extract = new List<Extract>();
+                user.Extract.Add(movement);
+
+                //Atualiza no banco de dados
                 var result = await this._userManager.UpdateAsync(user);
 
                 if (result.Succeeded)
@@ -357,7 +395,19 @@ namespace WeBank.API.Controllers
                     user.Balance = user.Balance - userBalance.SavedBalance;
                     //Atualiza o saldo guardado
                     user.SavedBalance += userBalance.SavedBalance;
+                    
+                    //Cria o movimento para ser adicionado ao extrato
+                    var movement = new Extract();                
+                    movement.TypeMovement = "Guardar Dinheiro";
+                    movement.Value = userBalance.SavedBalance;
+                    movement.Receiver = user.UserName;
+                    movement.Date = DateTime.Now;
+                    
+                    //Adiciona a movimentação ao extrato
+                    user.Extract = new List<Extract>();
+                    user.Extract.Add(movement);
 
+                    //Atualiza no banco de dados
                     var result = await this._userManager.UpdateAsync(user);
 
                     if (result.Succeeded)
@@ -392,6 +442,18 @@ namespace WeBank.API.Controllers
                     //Atualiza o saldo da conta
                     user.Balance += userBalance.Balance;
                     
+                    //Cria o movimento para ser adicionado ao extrato
+                    var movement = new Extract();                
+                    movement.TypeMovement = "Resgatar Dinheiro";
+                    movement.Value = userBalance.Balance;
+                    movement.Receiver = user.UserName;
+                    movement.Date = DateTime.Now;
+                    
+                    //Adiciona a movimentação ao extrato
+                    user.Extract = new List<Extract>();
+                    user.Extract.Add(movement);
+
+                    //Atualiza no banco de dados
                     var result = await this._userManager.UpdateAsync(user);
 
                     if (result.Succeeded)

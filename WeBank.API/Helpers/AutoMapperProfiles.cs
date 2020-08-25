@@ -21,6 +21,8 @@ namespace WeBank.API.Helpers
             CreateMap<User, UserUpdateDTO>().ReverseMap();
 
             CreateMap<User, UserUpdatePasswordDTO>().ReverseMap();
+
+            CreateMap<Extract, ExtractDTO>().ReverseMap();
  
         }
     }
