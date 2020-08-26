@@ -1,6 +1,6 @@
 # API REST do Projeto WeBank.
 
-> Projeto em Concluído!
+> Projeto Concluído!
 
 ### Este projeto é desenvolvido com o propósito de agregar conteúdo ao meu portfólio pessoal de projetos.
 - Desenvolvedor: Thales Junior de Souza Gomes
