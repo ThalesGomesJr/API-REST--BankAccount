@@ -48,7 +48,7 @@ namespace WeBank.Repository
             var random = new Random();
             var numP1 = new string(Enumerable.Repeat(numbers, 6).Select(n => n[random.Next(n.Length)]).ToArray());
             var numP2 = new string(Enumerable.Repeat(numbers, 2).Select(n => n[random.Next(n.Length)]).ToArray());
-            var numAccount = numP1 + "-" + numP2;
+            var numAccount = numP1 + numP2;
 
             var query = await this.GetUserAsyncByNumAccount(numAccount);
 

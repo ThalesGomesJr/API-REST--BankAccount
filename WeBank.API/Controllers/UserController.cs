@@ -318,7 +318,6 @@ namespace WeBank.API.Controllers
             }
         }
 
-
         [HttpGet("numAccount/{numAccount}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetUserbyNumAccount(string numAccount)
@@ -329,7 +328,7 @@ namespace WeBank.API.Controllers
                 
                 if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Numero da conta não encontrado");
 
-                var results = this._mapper.Map<UserTransferDTO>(user);
+                var results = this._mapper.Map<UserDTO>(user);
                 
                 return Ok(results);
             }
@@ -350,29 +349,36 @@ namespace WeBank.API.Controllers
                 var user = await this._userManager.FindByIdAsync(Id.ToString());
                 if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
                 
-                //Atualiza o saldo da conta
-                user.Balance += userBalance.Balance;
-
-                //Cria o movimento para ser adicionado ao extrato
-                var movement = new Extract();                
-                movement.TypeMovement = "Depósito";
-                movement.Value = userBalance.Balance;
-                movement.Receiver = user.UserName;
-                movement.Date = DateTime.Now;
-                
-                //Adiciona a movimentação ao extrato
-                user.Extract = new List<Extract>();
-                user.Extract.Add(movement);
-
-                //Atualiza no banco de dados
-                var result = await this._userManager.UpdateAsync(user);
-
-                if (result.Succeeded)
+                if (userBalance.Balance > 0)
                 {
-                    return Ok();
-                }    
-                
-                return BadRequest(result.Errors);
+                    //====================================================
+                    //Atualiza o saldo da conta
+                    user.Balance += userBalance.Balance;
+
+                    //====================================================
+                    //Cria o movimento para ser adicionado ao extrato
+                    var movement = new Extract();                
+                    movement.TypeMovement = "Depósito";
+                    movement.Value = userBalance.Balance;
+                    movement.Receiver = user.UserName;
+                    movement.Date = DateTime.Now;
+                    
+                    //Adiciona a movimentação ao extrato
+                    user.Extract = new List<Extract>();
+                    user.Extract.Add(movement);
+                    
+                    //====================================================
+                    //Atualiza no banco de dados
+                    var result = await this._userManager.UpdateAsync(user);
+
+                    if (result.Succeeded)
+                    {
+                        return Ok();
+                    }    
+                    
+                    return BadRequest(result.Errors);
+                }
+                return this.StatusCode(StatusCodes.Status401Unauthorized, "Valor não Autorizado para o Depósito Solicitado"); 
             }
             catch (System.Exception)
             {
@@ -389,13 +395,15 @@ namespace WeBank.API.Controllers
                 var user = await this._userManager.FindByIdAsync(Id.ToString());
                 if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
                 
-                if (user.Balance >= userBalance.SavedBalance)
+                if (user.Balance >= userBalance.SavedBalance && userBalance.SavedBalance > 0)
                 {
+                    //====================================================
                     //Atualiza o saldo da conta
                     user.Balance = user.Balance - userBalance.SavedBalance;
                     //Atualiza o saldo guardado
                     user.SavedBalance += userBalance.SavedBalance;
                     
+                    //====================================================
                     //Cria o movimento para ser adicionado ao extrato
                     var movement = new Extract();                
                     movement.TypeMovement = "Guardar Dinheiro";
@@ -407,6 +415,7 @@ namespace WeBank.API.Controllers
                     user.Extract = new List<Extract>();
                     user.Extract.Add(movement);
 
+                    //====================================================
                     //Atualiza no banco de dados
                     var result = await this._userManager.UpdateAsync(user);
 
@@ -418,7 +427,7 @@ namespace WeBank.API.Controllers
                     return BadRequest(result.Errors);
                 }
 
-                return this.StatusCode(StatusCodes.Status401Unauthorized, "Valor de saldo é insuficiente");
+                return this.StatusCode(StatusCodes.Status401Unauthorized, "Valor não Autorizado para Guardar o Dinheiro Solicitado");
             }
             catch (System.Exception)
             {
@@ -435,13 +444,15 @@ namespace WeBank.API.Controllers
                 var user = await this._userManager.FindByIdAsync(Id.ToString());
                 if (user == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
                 
-                if (user.SavedBalance >= userBalance.Balance)
+                if (user.SavedBalance >= userBalance.Balance && userBalance.Balance > 0)
                 {
+                    //====================================================
                     //Atualiza o saldo guardado
                     user.SavedBalance = user.SavedBalance - userBalance.Balance;
                     //Atualiza o saldo da conta
                     user.Balance += userBalance.Balance;
-                    
+
+                    //====================================================
                     //Cria o movimento para ser adicionado ao extrato
                     var movement = new Extract();                
                     movement.TypeMovement = "Resgatar Dinheiro";
@@ -453,6 +464,7 @@ namespace WeBank.API.Controllers
                     user.Extract = new List<Extract>();
                     user.Extract.Add(movement);
 
+                    //====================================================
                     //Atualiza no banco de dados
                     var result = await this._userManager.UpdateAsync(user);
 
@@ -464,11 +476,80 @@ namespace WeBank.API.Controllers
                     return BadRequest(result.Errors);
                 }
 
-                return this.StatusCode(StatusCodes.Status401Unauthorized, "Valor guardado é insuficiente");
+                return this.StatusCode(StatusCodes.Status401Unauthorized, "Valor não Autorizado para Resgatar o Dinheiro Solicitado");
             }
             catch (System.Exception)
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de dados falhou");
+            }
+        }
+
+        [HttpPost("transfer/{Id}/{numAccount}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> transfer(int Id, string numAccount, UserBalanceDTO userBalance)
+        {
+            try
+            {
+                var userSender = await this._userManager.FindByIdAsync(Id.ToString());
+                if (userSender == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
+                
+                var userReceiver = await this._repo.GetUserAsyncByNumAccount(numAccount);
+                if (userReceiver == null) return this.StatusCode(StatusCodes.Status404NotFound, "Usuário não encontrado");
+                
+                if (userSender.Balance >= userBalance.Balance && userBalance.Balance > 0)
+                {
+                    //====================================================
+                    //Atualiza o saldo da conta de quem envia a transfência
+                    userSender.Balance = userSender.Balance - userBalance.Balance;
+
+                    //Atualiza o saldo da conta de quem recebe a transfência
+                    userReceiver.Balance += userBalance.Balance;
+
+                   //====================================================
+                    //Cria o movimento para ser adicionado ao extrato de quem envia a transfência
+                    var movementSender = new Extract();                
+                    movementSender.TypeMovement = "Realizou Transferência";
+                    movementSender.Value = userBalance.Balance;
+                    movementSender.Receiver = userReceiver.UserName;
+                    movementSender.Date = DateTime.Now;
+                    
+                    //Adiciona a movimentação ao extrato de quem envia a transfência
+                    userSender.Extract = new List<Extract>();
+                    userSender.Extract.Add(movementSender);
+
+                    //====================================================
+                    //Cria o movimento para ser adicionado ao extrato de quem recebe a transfência
+                    var movementReceiver = new Extract();                
+                    movementReceiver.TypeMovement = "Recebeu Transferência";
+                    movementReceiver.Value = userBalance.Balance;
+                    movementReceiver.Receiver = userSender.UserName;
+                    movementReceiver.Date = DateTime.Now;
+                    
+                    //Adiciona a movimentação ao extrato de quem recebe a transfência
+                    userReceiver.Extract = new List<Extract>();
+                    userReceiver.Extract.Add(movementReceiver);
+
+                    //====================================================
+                    //Atualiza no banco de dados
+                    var resultSender = await this._userManager.UpdateAsync(userSender);
+                    if (resultSender.Succeeded)
+                    {
+                        //Atualiza no banco de dados
+                        var resultReceiver = await this._userManager.UpdateAsync(userReceiver);
+                        if (resultReceiver.Succeeded)
+                        {
+                            return Ok();    
+                        }
+                        return BadRequest(resultReceiver.Errors);    
+                    }    
+            
+                    return BadRequest(resultSender.Errors);
+                }
+                return this.StatusCode(StatusCodes.Status401Unauthorized, "Valor não Autorizado para a Transferência Solicitada"); 
+            }
+            catch (System.Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Banco de dados falhou");               
             }
         }
 
