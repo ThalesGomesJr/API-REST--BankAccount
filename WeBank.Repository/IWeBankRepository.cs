@@ -5,10 +5,11 @@ namespace WeBank.Repository
 {
     public interface IWeBankRepository
     {
-        Task<string> VerifyNumAccount();
         Task<User[]> GetAllUserAsync();
-        Task<User> GetUserAsyncByNumAccount(string numAccount);
         Task<Extract[]> GetExtractAsyncById(int id);
+        Task<User> GetUserAsyncByNumAccount(string numAccount);
+        Task<string> VerifyNumAccount();
+        Task<Extract> CreateMovement(string typeMovement, decimal value, string receiver);
         
     }
 }

@@ -338,7 +338,7 @@ namespace WeBank.API.Controllers
             }
         }
 
-        //Rotas para movimentações bancárias
+        //Controllers para movimentações bancárias
 
         [HttpPost("deposit/{Id}")]
         [AllowAnonymous]
@@ -357,11 +357,7 @@ namespace WeBank.API.Controllers
 
                     //====================================================
                     //Cria o movimento para ser adicionado ao extrato
-                    var movement = new Extract();                
-                    movement.TypeMovement = "Depósito";
-                    movement.Value = userBalance.Balance;
-                    movement.Receiver = user.UserName;
-                    movement.Date = DateTime.Now;
+                    var movement = await this._repo.CreateMovement("Depósito", userBalance.Balance, user.UserName);
                     
                     //Adiciona a movimentação ao extrato
                     user.Extract = new List<Extract>();
@@ -405,12 +401,8 @@ namespace WeBank.API.Controllers
                     
                     //====================================================
                     //Cria o movimento para ser adicionado ao extrato
-                    var movement = new Extract();                
-                    movement.TypeMovement = "Guardar Dinheiro";
-                    movement.Value = userBalance.SavedBalance;
-                    movement.Receiver = user.UserName;
-                    movement.Date = DateTime.Now;
-                    
+                    var movement = await this._repo.CreateMovement("Guardar Dinheiro", userBalance.SavedBalance, user.UserName);
+
                     //Adiciona a movimentação ao extrato
                     user.Extract = new List<Extract>();
                     user.Extract.Add(movement);
@@ -454,11 +446,7 @@ namespace WeBank.API.Controllers
 
                     //====================================================
                     //Cria o movimento para ser adicionado ao extrato
-                    var movement = new Extract();                
-                    movement.TypeMovement = "Resgatar Dinheiro";
-                    movement.Value = userBalance.Balance;
-                    movement.Receiver = user.UserName;
-                    movement.Date = DateTime.Now;
+                    var movement = await this._repo.CreateMovement("Resgatar Dinheiro", userBalance.Balance, user.UserName);
                     
                     //Adiciona a movimentação ao extrato
                     user.Extract = new List<Extract>();
@@ -507,11 +495,7 @@ namespace WeBank.API.Controllers
 
                    //====================================================
                     //Cria o movimento para ser adicionado ao extrato de quem envia a transfência
-                    var movementSender = new Extract();                
-                    movementSender.TypeMovement = "Realizou Transferência";
-                    movementSender.Value = userBalance.Balance;
-                    movementSender.Receiver = userReceiver.UserName;
-                    movementSender.Date = DateTime.Now;
+                    var movementSender = await this._repo.CreateMovement("Realizou Transferência", userBalance.Balance, userReceiver.UserName);
                     
                     //Adiciona a movimentação ao extrato de quem envia a transfência
                     userSender.Extract = new List<Extract>();
@@ -519,12 +503,8 @@ namespace WeBank.API.Controllers
 
                     //====================================================
                     //Cria o movimento para ser adicionado ao extrato de quem recebe a transfência
-                    var movementReceiver = new Extract();                
-                    movementReceiver.TypeMovement = "Recebeu Transferência";
-                    movementReceiver.Value = userBalance.Balance;
-                    movementReceiver.Receiver = userSender.UserName;
-                    movementReceiver.Date = DateTime.Now;
-                    
+                    var movementReceiver = await this._repo.CreateMovement("Recebeu Transferência", userBalance.Balance, userSender.UserName);
+                                        
                     //Adiciona a movimentação ao extrato de quem recebe a transfência
                     userReceiver.Extract = new List<Extract>();
                     userReceiver.Extract.Add(movementReceiver);

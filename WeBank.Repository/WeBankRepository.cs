@@ -60,6 +60,18 @@ namespace WeBank.Repository
             return await this.VerifyNumAccount();
         
         }
+        public async Task<Extract> CreateMovement(string typeMovement, decimal value, string receiver)
+        {
+            var movement = new Extract();                
+            movement.TypeMovement = typeMovement;
+            movement.Value = value;
+            movement.Receiver = receiver;
+            movement.Date = DateTime.Now;
 
+            return movement;    
+        }
+
+
+    
     }
 }
