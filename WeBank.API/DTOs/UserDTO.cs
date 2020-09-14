@@ -1,12 +1,10 @@
-
 using System.Collections.Generic;
-using WeBank.Domain.Models;
 
 namespace WeBank.API.DTOs
 {
     public class UserDTO
     {
-        public int Id { get; set; }
+        public int Id { get; set; }        
         public string UserName { get; set; }
         public string FullName { get; set; }
         public string NumAccount { get; set; }
