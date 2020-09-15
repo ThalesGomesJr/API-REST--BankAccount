@@ -1,4 +1,4 @@
-# API REST do Projeto WeBank.
+# API RESTful do Projeto WeBank.
 
 > Projeto Concluído!
 
