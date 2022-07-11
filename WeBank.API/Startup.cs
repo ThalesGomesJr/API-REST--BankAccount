@@ -22,10 +22,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using WeBank.Domain.Models;
-using WeBank.Repository;
+using BankAccount.Domain.Models;
+using BankAccount.Repository;
 
-namespace WeBank.API
+namespace BankAccount.API
 {
     public class Startup
     {

@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
-using WeBank.Domain.Models;
+using BankAccount.Domain.Models;
 
-namespace WeBank.Repository
+namespace BankAccount.Repository
 {
     public interface IWeBankRepository
     {

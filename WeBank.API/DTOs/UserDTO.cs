@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace WeBank.API.DTOs
+namespace BankAccount.API.DTOs
 {
     public class UserDTO
     {

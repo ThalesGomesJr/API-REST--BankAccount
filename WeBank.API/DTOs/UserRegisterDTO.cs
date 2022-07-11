@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace WeBank.API.DTOs
+namespace BankAccount.API.DTOs
 {    
     public class UserRegisterDTO
     {

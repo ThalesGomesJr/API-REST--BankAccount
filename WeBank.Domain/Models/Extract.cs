@@ -1,6 +1,6 @@
 using System;
 
-namespace WeBank.Domain.Models
+namespace BankAccount.Domain.Models
 {
     public class Extract
     {

@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WeBank.Domain.Models;
+using BankAccount.Domain.Models;
 
-namespace WeBank.Repository
+namespace BankAccount.Repository
 {
     public class WeBankContext : IdentityDbContext<User, Role, int, IdentityUserClaim<int>, UserRole,
                                   IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>> 

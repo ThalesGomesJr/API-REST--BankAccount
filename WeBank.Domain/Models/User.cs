@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
-namespace WeBank.Domain.Models
+namespace BankAccount.Domain.Models
 {
     public class User : IdentityUser<int>
     {

@@ -2,9 +2,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using WeBank.Domain.Models;
+using BankAccount.Domain.Models;
 
-namespace WeBank.Repository
+namespace BankAccount.Repository
 {
     public class WeBankRepository : IWeBankRepository
     {

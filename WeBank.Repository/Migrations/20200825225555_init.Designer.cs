@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WeBank.Repository;
+using BankAccount.Repository;
 
-namespace WeBank.Repository.Migrations
+namespace BankAccount.Repository.Migrations
 {
     [DbContext(typeof(WeBankContext))]
     [Migration("20200825225555_init")]

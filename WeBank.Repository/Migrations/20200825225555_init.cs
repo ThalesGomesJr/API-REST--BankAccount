@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace WeBank.Repository.Migrations
+namespace BankAccount.Repository.Migrations
 {
     public partial class init : Migration
     {

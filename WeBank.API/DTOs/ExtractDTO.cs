@@ -1,4 +1,4 @@
-namespace WeBank.API.DTOs
+namespace BankAccount.API.DTOs
 {
     public class ExtractDTO
     {

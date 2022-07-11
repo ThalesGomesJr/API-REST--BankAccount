@@ -1,8 +1,8 @@
 using AutoMapper;
-using WeBank.API.DTOs;
-using WeBank.Domain.Models;
+using BankAccount.API.DTOs;
+using BankAccount.Domain.Models;
 
-namespace WeBank.API.Helpers
+namespace BankAccount.API.Helpers
 {
     public class AutoMapperProfiles : Profile
     {
