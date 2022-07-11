@@ -5,3 +5,5 @@
 # .Net Core Project
 bin
 obj
+
+/.vs
